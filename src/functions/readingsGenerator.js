@@ -3,7 +3,6 @@ import db from '../models'
 import Debug from 'debug'
 
 // const debug = Debug('ReadingsGeneratorFunction:debug')
-// const info = Debug('ReadingsGeneratorFunction:info')
 const error = Debug('ReadingsGeneratorFunction:error')
 
 ;(async () => {
@@ -37,5 +36,4 @@ export default async (event, context, callback) => {
   }
 
   callback(null, response)
-
 }

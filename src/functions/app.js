@@ -3,9 +3,8 @@ import app from '../app'
 import db from '../models/index'
 import Debug from 'debug'
 
-// const debug = Debug('ReadingsFunction:debug')
-// const info = Debug('ReadingsFunction:info')
-const error = Debug('ReadingsFunction:error')
+// const debug = Debug('AppFunction:debug')
+const error = Debug('AppFunction:error')
 
 ;(async () => {
   try {

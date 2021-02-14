@@ -27,11 +27,6 @@ provider:
   runtime: nodejs12.x
   stage: dev
   region: us-east-1
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - sqs:SendMessage
-#      Resource: !Ref GasReadingsQueue
   environment:
     QUEUE_URL: !Ref GasReadingsQueue
     DEBUG: ${ssm:debug}
@@ -45,10 +40,6 @@ provider:
     ACCESS_TOKEN_SECRET: ${ssm:accessTokenSecret}
 
 functions:
-  readings:
-    handler: src/functions/readings.default
-    events:
-        - http: GET /reading
   receiver:
     handler: src/functions/receiver.default
     events:
@@ -57,10 +48,9 @@ functions:
             Fn::GetAtt:
               - "GasReadingsQueue"
               - "Arn"
-#      - sqs: !Ref GasReadingsQueue
+
   generator:
     handler: src/functions/readingsGenerator.default
-    timeout: 30
     events:
       - schedule:
           rate: cron(0 * ? * * *)
@@ -72,8 +62,9 @@ functions:
             Fn::GetAtt:
               - "GasReadingsQueue"
               - "Arn"
+
   app:
-    handler: src/lambda.default
+    handler: src/functions/app.default
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'

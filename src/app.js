@@ -1,8 +1,8 @@
 import express from 'serverless-express/express'
 import cors from 'cors'
-import Debug from 'debug'
+// import Debug from 'debug'
 import bodyParser from 'body-parser'
-import middleware from './middleware'
+import authenticateToken from './middleware'
 import Reading from './controllers/reading'
 import Auth from './controllers/auth'
 
@@ -12,30 +12,14 @@ const corsOptions = {
   origin: process.env.CORS_ORIGIN
 }
 
-const debug = Debug('server:debug')
-// const info = Debug('server:info')
-// const error = Debug('server:error')
+// const debug = Debug('server:debug')
 
 app.use(cors(corsOptions))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 
-app.post('/login', middleware.authenticateToken, async (req, res) => {
-  const username = req.body.username
-  const password = req.body.password
-  if (!username || !password) {
-    return res.status(400).json({
-      type: 'error',
-      message: 'username and password fields are required'
-    })
-  }
-  const result = await Auth.getToken(username, password)
-  debug(result)
-  res.send(result)
-})
-
-app.get('/user', middleware.authenticateToken, async (req, res) => {
+app.get('/user', authenticateToken, async (req, res) => {
   const token = req.headers['x-access-token']
   if (!token) {
     return res.status(400).json({
@@ -43,38 +27,71 @@ app.get('/user', middleware.authenticateToken, async (req, res) => {
       message: 'x-access-token header not found.'
     })
   }
-  const result = await Auth.getUser(token)
-  res.send(result)
-})
-
-app.get('/reading/:id', middleware.authenticateToken, async (req, res) => {
-  debug(req.params.id)
-  debug(req.query)
   try {
-    const response = await Reading.getByDateAndClientId(req.params.id, req.query)
-    res.send(response)
-  } catch(e) {
-    res.send(e)
+    const result = await Auth.getUser(token)
+    res.send(result)
+  } catch (e) {
+    res.status(400).json({
+      type: 'error',
+      message: e.message
+    })
   }
 })
 
-app.post('/reading', middleware.authenticateToken, async (req, res) => {
-  debug('post reading')
+app.post('/login', authenticateToken, async (req, res) => {
+  const username = req.body.username
+  const password = req.body.password
+  if (!username || !password) {
+    return res.status(400).json({
+      type: 'error',
+      message: 'Username and password are required'
+    })
+  }
   try {
-    const response = await Reading.save(req.body)
-    res.send(response)
-  } catch(e) {
-    res.send(e)
+    const result = await Auth.getToken(username, password)
+    res.send(result)
+  } catch (e) {
+    return res.status(400).json({
+      type: 'error',
+      message: e.message
+    })
   }
 })
 
-app.get('/reading', middleware.authenticateToken, async (req, res) => {
-  debug('Get reading')
+app.get('/reading', authenticateToken, async (req, res) => {
   try {
     const response = await Reading.getAll()
     res.send(response)
   } catch(e) {
-    res.send(e)
+    return res.status(400).json({
+      type: 'error',
+      message: e.message
+    })
+  }
+})
+
+app.get('/reading/:id', async (req, res) => {
+  const date = req.query.d
+  try {
+    const response = await Reading.getByClientId(req.params.id, date)
+    res.send(response)
+  } catch(e) {
+    return res.status(400).json({
+      type: 'error',
+      message: e.message
+    })
+  }
+})
+
+app.post('/reading', authenticateToken, async (req, res) => {
+  try {
+    const response = await Reading.save(req.body)
+    res.send(response)
+  } catch(e) {
+    return res.status(400).json({
+      type: 'error',
+      message: e.message
+    })
   }
 })
 

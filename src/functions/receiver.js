@@ -3,7 +3,6 @@ import db from '../models/index'
 import Debug from 'debug'
 
 const debug = Debug('ReceiverFunction:debug')
-// const info = Debug('ReceiverFunction:info')
 const error = Debug('ReceiverFunction:error')
 
 ;(async () => {
@@ -26,7 +25,6 @@ const handler = async (event, context, callback) => {
   }
   debug(event.Records)
   await Reading.save(event.Records)
-  debug('Done inserting')
   callback(null, response)
 }
 
