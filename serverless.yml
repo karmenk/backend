@@ -1,0 +1,79 @@
+service: backend
+
+plugins:
+  - serverless-express
+  - serverless-plugin-reducer
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+
+package:
+  individually: true
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+resources:
+  Resources:
+    GasReadingsQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: GasReadings
+        VisibilityTimeout: 40
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-1
+#  iamRoleStatements:
+#    - Effect: "Allow"
+#      Action:
+#        - sqs:SendMessage
+#      Resource: !Ref GasReadingsQueue
+  environment:
+    QUEUE_URL: !Ref GasReadingsQueue
+    DEBUG: ${ssm:debug}
+    JWT_TOKEN: ${ssm:jwtToken}
+    PG_HOST: ${ssm:pgHost}
+    PG_PORT: ${ssm:pgPort}
+    PG_USERNAME: ${ssm:pgUsername}
+    PG_PASSWORD: ${ssm:pgPassword}
+    PG_DATABASE: ${ssm:pgDatabase}
+    CORS_ORIGIN: ${ssm:corsOrigin}
+    ACCESS_TOKEN_SECRET: ${ssm:accessTokenSecret}
+
+functions:
+  readings:
+    handler: src/functions/readings.default
+    events:
+        - http: GET /reading
+  receiver:
+    handler: src/functions/receiver.default
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - "GasReadingsQueue"
+              - "Arn"
+#      - sqs: !Ref GasReadingsQueue
+  generator:
+    handler: src/functions/readingsGenerator.default
+    timeout: 30
+    events:
+      - schedule:
+          rate: rate(3 minutes)
+    iamRoleStatements:
+        - Effect: "Allow"
+          Action:
+            - sqs:SendMessage
+          Resource:
+            Fn::GetAtt:
+              - "GasReadingsQueue"
+              - "Arn"
+  app:
+    handler: src/lambda.default
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'

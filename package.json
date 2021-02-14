@@ -1,0 +1,60 @@
+{
+  "name": "wallet-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "nodemon -r esm src/app.local.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "create": "sequelize migration:create --name=test",
+    "migrate": "npx sequelize-cli db:migrate",
+    "undo": "npx sequelize-cli db:migrate:undo",
+    "deploy": "npx serverless deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serverless-express": "^2.0.11",
+    "body-parser": "^1.19.0",
+    "sequelize": "^6.5.0",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "pg-native": "^3.0.0",
+    "cors": "^2.8.5",
+    "aws-sdk": "^2.842.0",
+    "debug": "^4.3.1",
+    "source-map-support": "^0.5.19",
+    "uuid": "^8.3.2",
+    "dayjs": "^1.10.4",
+    "jsonwebtoken": "^8.5.1",
+    "bcrypt": "^5.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "serverless-plugin-reducer": "^3.2.4",
+    "serverless-webpack": "^5.3.5",
+    "webpack": "^5.21.2",
+    "webpack-node-externals": "^2.5.2",
+    "@babel/cli": "^7.12.13",
+    "@babel/core": "^7.12.13",
+    "@babel/plugin-transform-runtime": "^7.12.15",
+    "babel-plugin-source-map-support": "^2.1.3",
+    "@babel/preset-env": "^7.12.13",
+    "@babel/register": "^7.12.13",
+    "@babel/runtime": "^7.12.13",
+    "@babel/node": "^7.12.13",
+    "babel-loader": "^8.2.2",
+    "nodemon": "^2.0.7",
+    "eslint": "^7.19.0",
+    "babel-eslint": "^10.1.0",
+    "sequelize-cli": "^6.2.0",
+    "serverless-iam-roles-per-function": "^3.1.0",
+    "esm": "^3.2.25"
+  },
+  "engines": {
+    "node": ">=14.15.x",
+    "npm": ">=6.14.x"
+  }
+}
