@@ -35,7 +35,7 @@ app.post('/login', middleware.authenticateToken, async (req, res) => {
   res.send(result)
 })
 
-app.get('/me', middleware.authenticateToken, async (req, res) => {
+app.get('/user', middleware.authenticateToken, async (req, res) => {
   const token = req.headers['x-access-token']
   if (!token) {
     return res.status(400).json({
