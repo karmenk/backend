@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk'
-import { clientModel } from '../models/index'
 import Debug from 'debug'
 import { v4 as uuidv4 } from 'uuid'
+import ClientService from './client'
 
 // const debug = Debug('ReadingsGeneratorService:debug')
 const error = Debug('ReadingsGeneratorService:error')
@@ -35,7 +35,7 @@ let readingsGenerator = {
     const now = Date.now()
     let rows
     try {
-      rows = await clientModel.findAll({where: {active: true}})
+      rows = await ClientService.getAllActive()
     } catch (e) {
       error(e)
       return []

@@ -58,18 +58,6 @@ app.post('/login', authenticateToken, async (req, res) => {
   }
 })
 
-app.get('/reading', authenticateToken, async (req, res) => {
-  try {
-    const response = await Reading.getAll()
-    res.send(response)
-  } catch(e) {
-    return res.status(400).json({
-      type: 'error',
-      message: e.message
-    })
-  }
-})
-
 app.get('/reading/:id', async (req, res) => {
   const date = req.query.d
   try {

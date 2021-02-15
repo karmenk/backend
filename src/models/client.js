@@ -4,7 +4,8 @@ const Client = (sequelize, Sequelize) => {
       type: Sequelize.STRING
     },
     active: {
-      type: Sequelize.BOOLEAN
+      type: Sequelize.BOOLEAN,
+      defaultValue: true
     }
   }, {
     timestamps: true
