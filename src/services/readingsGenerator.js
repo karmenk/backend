@@ -18,21 +18,9 @@ let readingsGenerator = {
       return
     }
 
-    let params = {
-      QueueUrl: queueUrl,
-      Entries: []
-    }
-
-    data.map(item => {
-      params.Entries.push({
-        Id: uuidv4(),
-        MessageBody: JSON.stringify({'clientId': item.id, 'time': item.time, 'reading': item.reading})
-      })
-    })
-    return await sqs.sendMessageBatch(params).promise()
+    return await sqs.sendMessageBatch(this.createBatch(data)).promise()
   },
   async generate () {
-    const now = Date.now()
     let rows
     try {
       rows = await ClientService.getAllActive()
@@ -43,6 +31,7 @@ let readingsGenerator = {
     if (!rows) {
       return []
     }
+    const now = Date.now()
     return rows.map(row => {
       return {
         id: row.id,
@@ -50,6 +39,20 @@ let readingsGenerator = {
         reading: Math.floor(Math.random() * (65 - 5 + 1) + 5)
       }
     })
+  },
+  createBatch (data) {
+    let batch = {
+      QueueUrl: queueUrl,
+      Entries: []
+    }
+
+    data.map(item => {
+      batch.Entries.push({
+        Id: uuidv4(),
+        MessageBody: JSON.stringify({'clientId': item.id, 'time': item.time, 'reading': item.reading})
+      })
+    })
+    return batch
   }
 }
 

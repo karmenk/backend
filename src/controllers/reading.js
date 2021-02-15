@@ -5,9 +5,6 @@ import ReadingService from '../services/reading'
 const error = Debug('ReadingController:error')
 
 let reading = {
-  async getAll () {
-    return await ReadingService.getAll()
-  },
   async getByClientId (clientId, date) {
     if (!date || !(/\d{4}-[01]\d-[0-3]\d/.test(date))) {
       error(`Invalid or missing date: ${date}`)

@@ -6,20 +6,10 @@ import db, { readingModel } from '../models'
 const error = Debug('ReadingService:error')
 
 let reading = {
-  async getAll () {
-    try {
-      return await readingModel.findAll({})
-    } catch (e) {
-      error(e)
-      throw new Error('Unable to get readings')
-    }
-  },
   async findByClientIdAndDate (clientId, date) {
     let where = {clientId: clientId}
-    const today = dayjs(date).add(1, 'hour')  // reading for first hour (00:00 - 01:00) is at 1am
-    const tomorrow = today.add(1, 'day').format('YYYY-MM-DD hh:mm')
-    where.time = {[db.Sequelize.Op.gte]: today.format('YYYY-MM-DD hh:mm'), [db.Sequelize.Op.lt]: tomorrow}
-
+    let [ today, tomorrow ] = this.calculateDates(date)
+    where.time = {[db.Sequelize.Op.gte]: today, [db.Sequelize.Op.lt]: tomorrow}
     try {
       return await readingModel.findAll({
         where: where,
@@ -39,6 +29,11 @@ let reading = {
       error(e)
       throw new Error('Unable to save readings')
     }
+  },
+  calculateDates (date) {
+    const today = dayjs(date).add(1, 'hour')
+    const tomorrow = today.add(24, 'hours').format('YYYY-MM-DD HH:mm')
+    return [today.format('YYYY-MM-DD HH:mm'), tomorrow]
   }
 }
 

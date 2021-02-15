@@ -9,7 +9,7 @@ let auth = {
     let account
     try {
       account = await accountModel.findOne({
-        where: { id: accountId },
+        where: { id: accountId, active: true },
         include: { model: userModel }
       })
     } catch (e) {
@@ -28,13 +28,19 @@ let auth = {
   },
   async getAccountByUsername (username) {
     let account = await accountModel.findOne({
-      where: { username: username },
+      where: { username: username, active: true },
       include: { model: userModel }
     })
     if (!account) {
       throw new Error('User not found')
     }
-    return account.dataValues
+    return {
+      accountId: account.dataValues.id,
+      userId: account.dataValues.userId,
+      username: account.dataValues.username,
+      password: account.dataValues.password,
+      clientId: account.dataValues.user.dataValues.clientId
+    }
   }
 }
 
