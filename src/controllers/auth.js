@@ -23,9 +23,11 @@ let auth = {
     const userData = {
       userId: account.userId,
       username: account.username,
-      clientId: account.user.dataValues.clientId,
-      accountId: account.id
+      password: account.password,
+      clientId: account.clientId,
+      accountId: account.accountId
     }
+
     return {
       type: 'success',
       message: 'User logged in.',

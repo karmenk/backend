@@ -8,13 +8,7 @@ module.exports = {
     "database": process.env.PG_DATABASE,
     "host": process.env.PG_HOST,
     "port": process.env.PG_PORT,
-    "dialect": "postgres",
-    "dialectOptions": {
-      "ssl": {
-        "require": true,
-        "rejectUnauthorized": false
-      }
-    }
+    "dialect": "postgres"
   },
   "production": {
     "username": process.env.PG_USERNAME,
@@ -36,12 +30,6 @@ module.exports = {
     "database": process.env.PG_TEST_DATABASE,
     "host": process.env.PG_TEST_HOST,
     "port": process.env.PG_TEST_PORT,
-    "dialect": "postgres",
-    "dialectOptions": {
-      "ssl": {
-        "require": true,
-        "rejectUnauthorized": false
-      }
-    }
+    "dialect": "postgres"
   }
 }

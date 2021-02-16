@@ -16,9 +16,11 @@ let auth = {
       error(e)
       throw new Error('Unable to find account')
     }
+
     if (!account) {
       throw new Error('Requested user account was not found')
     }
+
     return {
       userId: account.dataValues.userId,
       username: account.dataValues.username,

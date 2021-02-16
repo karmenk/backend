@@ -1,5 +1,4 @@
 import Sequelize from 'sequelize'
-import * as pg from 'pg'
 import dbConfig from '../db.config'
 import Account from './account'
 import Client from './client'
@@ -13,26 +12,7 @@ if (process.env.NODE_ENV) {
   config = dbConfig.development
 }
 
-const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
-  host: config.HOST,
-  port: config.PORT,
-  dialect: config.dialect,
-  dialectModule: pg,
-  operatorsAliases: '0',
-  pool: {
-    max: config.pool.max,
-    min: config.pool.min,
-    acquire: config.pool.acquire,
-    idle: config.pool.idle
-  },
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-    useUTC: true
-  }
-})
+const sequelize = new Sequelize(config.database, config.username, config.password, config.options)
 
 const db = {}
 

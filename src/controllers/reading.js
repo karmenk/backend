@@ -16,7 +16,7 @@ let reading = {
     let data = []
 
     records.map(r => {
-      const body = JSON.parse(r.body)
+      const body = r.body ? JSON.parse(r.body) : JSON.parse(r.Body)
       data.push({
         clientId: body.clientId,
         time: body.time,

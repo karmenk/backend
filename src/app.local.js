@@ -2,6 +2,8 @@ import {} from 'dotenv/config'
 import app from './app.js'
 import db from './models/index'
 import Debug from 'debug'
+import cron from 'node-cron'
+import ReadingsGenerator from './services/readingsGenerator'
 
 // const debug = Debug('ServerLocal:debug')
 const info = Debug('ServerLocal:info')
@@ -16,6 +18,10 @@ const port = 3030
     error(e)
   }
 })()
+
+cron.schedule('0 * * * *', async () => {
+  await ReadingsGenerator.sendToQueue()
+}, {})
 
 app.listen(port)
 
